@@ -2,8 +2,8 @@
 # [Group-CAM](https://arxiv.org/pdf/2103.13859v4.pdf)
 
 <div align="center">
-  <img src="CAM/heatmap000095.bmp" width="800px" />
-  <img src="CAM/fusion000095.bmp" width="800px" />
+  <img src="CAM/heatmap000095.bmp" width="400px" />
+  <img src="CAM/fusion000095.bmp" width="400px" />
   <p>Example UAV123 bike1.</p>
 </div>
 ## 1. Environment setup
