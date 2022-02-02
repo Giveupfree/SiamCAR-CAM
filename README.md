@@ -21,4 +21,5 @@ python tools/CAM-demo.py                                \
 	--format bmp                                    \ # save fomat (pdf,png,jpg,bmp)   
 	--save_dir /path/to/save                        \ # save dir
 	--config ./experiments/siamcar_r50/config.yaml  \ # config file
+	--register_layer softmax                        \ # module register name
 ```
