@@ -1,6 +1,8 @@
 # [SiamCAR](https://openaccess.thecvf.com/content_CVPR_2020/html/Guo_SiamCAR_Siamese_Fully_Convolutional_Classification_and_Regression_for_Visual_Tracking_CVPR_2020_paper.html)
 # [Group-CAM](https://arxiv.org/pdf/2103.13859v4.pdf)
 
+Note: Not all frames can draw a Heatmap image, which may be a bug.
+
 <div align="center">
   <img src="CAM/heatmap000095.bmp" width="200px" />
   <img src="CAM/fusion000095.bmp" width="200px" />
