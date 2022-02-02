@@ -8,3 +8,4 @@ colorama
 matplotlib
 cython
 tensorboardX
+kornia
