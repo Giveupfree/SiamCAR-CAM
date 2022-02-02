@@ -7,6 +7,8 @@ This code has been tested on Ubuntu 16.04, Python 3.6, Pytorch 0.4.1/1.2.0, CUDA
 Please install related libraries before running this code: 
 ```bash
 pip install -r requirements.txt
+cd toolkit/utils/
+python setup.py build_ext --inplace
 ```
 
 ## 2. model
@@ -14,8 +16,9 @@ pip install -r requirements.txt
 
 ## 3. classfication heatmap
 ```bash 
+cd /path/to/SiamCAR-CAM
 conda activate SiamCAR
-export PYTHONPATH=/path/to/SiamCAR-CAM:$PYTHONPATH
+export PYTHONPATH=./:$PYTHONPATH
 python tools/CAM-demo.py                                \
 	--dataset_dir  /path/to/dataset/root            \ # dataset path
 	--dataset UAV123                                \ # dataset name(OTB100, GOT10k, LaSOT, UAV123)
