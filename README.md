@@ -14,6 +14,8 @@ pip install -r requirements.txt
 
 ## 3. classfication heatmap
 ```bash 
+conda activate SiamCAR
+export PYTHONPATH=/path/to/SiamCAR-CAM:$PYTHONPATH
 python tools/CAM-demo.py                                \
 	--dataset_dir  /path/to/dataset/root            \ # dataset path
 	--dataset UAV123                                \ # dataset name(OTB100, GOT10k, LaSOT, UAV123)
