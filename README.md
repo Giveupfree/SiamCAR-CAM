@@ -3,7 +3,7 @@
 
 
 ## 1. Environment setup
-This code has been tested on Ubuntu 16.04, Python 3.6, Pytorch 0.4.1/1.2.0, CUDA 9.0.
+This code has been tested on Ubuntu 18.04, Python 3.7, Pytorch 1.7.1, CUDA 11.1.
 Please install related libraries before running this code: 
 ```bash
 pip install -r requirements.txt
