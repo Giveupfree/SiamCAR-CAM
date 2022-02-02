@@ -2,8 +2,10 @@
 # [Group-CAM](https://arxiv.org/pdf/2103.13859v4.pdf)
 
 <div align="center">
-  <img src="CAM/heatmap000095.bmp" width="256px" />
-  <img src="CAM/fusion000095.bmp" width="256px" />
+  <img src="CAM/heatmap000095.bmp" width="200px" />
+  <img src="CAM/fusion000095.bmp" width="200px" />
+  <img src="CAM/heatmapBasketball.bmp" width="200px" />
+  <img src="CAM/fusionBasketball.bmp" width="200px" />
   <p>Example UAV123 bike1.</p>
 </div>
 ## 1. Environment setup
