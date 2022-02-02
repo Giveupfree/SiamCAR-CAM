@@ -12,7 +12,7 @@ pip install -r requirements.txt
 ## 2. model
 - [x] [SiamCAR](https://github.com/ohhhyeahhh/SiamCAR)
 
-## 3. heatmap
+## 3. classfication heatmap
 ```bash 
 python tools/CAM-demo.py                                \
 	--dataset_dir  /path/to/dataset/root            \ # dataset path
