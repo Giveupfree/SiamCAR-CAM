@@ -106,7 +106,7 @@ class GroupCAM(object):
             img = self.Nutransform(blur_img)
             base_line = self.model.model.track(torch.cat([img[:, 2, :, :][:, None, :, :],
                                      img[:, 1, :, :][:, None, :, :],
-                                     img[:, 0, :, :][:, None, :, :]], dim=1) * 255.0)["cls"].reshape(-1)[idx]
+                                     img[:, 0, :, :][:, None, :, :]], dim=1) * 255.0)["cls"][:, 1, :, :][:, None, :, :].reshape(-1)[idx]
             for saliency_map in masks:
                 saliency_map = saliency_map.sum(1, keepdims=True)
                 saliency_map = F.relu(saliency_map)
@@ -129,7 +129,7 @@ class GroupCAM(object):
                 img = self.Nutransform(blur_img)
                 outcls = self.model.model.track(torch.cat([img[:, 2, :, :][:, None, :, :],
                                      img[:, 1, :, :][:, None, :, :],
-                                     img[:, 0, :, :][:, None, :, :]], dim=1) * 255.0)["cls"].reshape(-1)[idx]
+                                     img[:, 0, :, :][:, None, :, :]], dim=1) * 255.0)["cls"][:, 1, :, :][:, None, :, :].reshape(-1)[idx]
                 score = outcls - base_line
 
                 # score_saliency_map += score * saliency_map
