@@ -30,7 +30,7 @@ conda activate SiamCAR
 export PYTHONPATH=./:$PYTHONPATH
 python tools/CAM-demo.py                                \
 	--dataset_dir  /path/to/dataset/root            \ # dataset path
-	--dataset UAV123                                \ # dataset name(OTB100, GOT10k, LaSOT, UAV123)
+	--dataset UAV123                                \ # dataset name(OTB100, GOT-10k, LaSOT, UAV123)
 	--snapshot snapshot/general_model.pth           \ # tracker_name
 	--format bmp                                    \ # save fomat (pdf,png,jpg,bmp)   
 	--save_dir /path/to/save                        \ # save dir
