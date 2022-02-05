@@ -124,7 +124,7 @@ def main():
     model = Model(model)
     # build tracker
     tracker = SiamCARTracker(model, cfg.TRACK)
-    CAM = GroupCAM(tracker, target_layer="softmax")
+    CAM = GroupCAM(tracker, target_layer=args.register_layer)
     if args.dataset == "GOT-10k":
         dataset = "GOT10k"
     else:
