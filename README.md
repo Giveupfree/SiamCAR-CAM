@@ -37,3 +37,5 @@ python tools/CAM-demo.py                                \
 	--config ./experiments/siamcar_r50/config.yaml  \ # config file
 	--register_layer softmax                        \ # module register name
 ```
+## 4. Update
+See update.md for details
