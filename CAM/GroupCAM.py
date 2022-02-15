@@ -24,8 +24,10 @@ class UnNormalize(object):
         :param tensor: tensor image of size (B,C,H,W) to be un-normalized
         :return: UnNormalized image
         """
+        tensor = tensor.permute(1, 0, 2, 3)
         for t, m, s in zip(tensor, self.mean, self.std):
             t.mul_(s).add_(m)
+        tensor = tensor.permute(1, 0, 2, 3)
         tensor = tensor.clamp(min=0, max=1)
         return tensor
 
