@@ -105,7 +105,7 @@ class GroupCAM(object):
             x_crop = torch.cat([x_crop[:, 2, :, :][:, None, :, :],
                                      x_crop[:, 1, :, :][:, None, :, :],
                                      x_crop[:, 0, :, :][:, None, :, :]], dim=1)/ 255.0
-            # 归一化和反归一化中的squeeze(0)和unsqueeze(0)用于兼容不同版本的pytorch
+            # 归一化和反归一化中的squeeze(0)和unsqueeze(0)用于兼容不同版本的torchvision
             norm_img = self.transform_norm(x_crop.squeeze(0)).unsqueeze(0)
             blur_img = blur(norm_img)
             img = self.Nutransform(blur_img.squeeze(0)).unsqueeze(0)
