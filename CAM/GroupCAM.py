@@ -24,10 +24,12 @@ class UnNormalize(object):
         :param tensor: tensor image of size (B,C,H,W) to be un-normalized
         :return: UnNormalized image
         """
-        tensor = tensor.permute(1, 0, 2, 3)
+        if tensor.ndim > 3:
+            tensor = tensor.permute(1, 0, 2, 3)
         for t, m, s in zip(tensor, self.mean, self.std):
             t.mul_(s).add_(m)
-        tensor = tensor.permute(1, 0, 2, 3)
+        if tensor.ndim > 3:
+            tensor = tensor.permute(1, 0, 2, 3)
         tensor = tensor.clamp(min=0, max=1)
         return tensor
 
@@ -103,9 +105,10 @@ class GroupCAM(object):
             x_crop = torch.cat([x_crop[:, 2, :, :][:, None, :, :],
                                      x_crop[:, 1, :, :][:, None, :, :],
                                      x_crop[:, 0, :, :][:, None, :, :]], dim=1)/ 255.0
-            norm_img = self.transform_norm(x_crop)
+            # 归一化和反归一化中的squeeze(0)和unsqueeze(0)用于兼容不同版本的python
+            norm_img = self.transform_norm(x_crop.squeeze(0)).unsqueeze(0)
             blur_img = blur(norm_img)
-            img = self.Nutransform(blur_img)
+            img = self.Nutransform(blur_img.squeeze(0)).unsqueeze(0)
             base_line = self.model.model.track(torch.cat([img[:, 2, :, :][:, None, :, :],
                                      img[:, 1, :, :][:, None, :, :],
                                      img[:, 0, :, :][:, None, :, :]], dim=1) * 255.0)["cls"][:, 1, :, :][:, None, :, :].reshape(-1)[idx]
@@ -126,9 +129,9 @@ class GroupCAM(object):
                 # how much increase if keeping the highlighted region
                 # predication on masked input
                 blur_input = norm_img * norm_saliency_map + blur_img * (1 - norm_saliency_map)
-                norm_img = self.transform_norm(blur_input)
+                norm_img = self.transform_norm(blur_input.squeeze(0)).unsqueeze(0)
                 blur_img = blur(norm_img)
-                img = self.Nutransform(blur_img)
+                img = self.Nutransform(blur_img.squeeze(0)).unsqueeze(0)
                 outcls = self.model.model.track(torch.cat([img[:, 2, :, :][:, None, :, :],
                                      img[:, 1, :, :][:, None, :, :],
                                      img[:, 0, :, :][:, None, :, :]], dim=1) * 255.0)["cls"][:, 1, :, :][:, None, :, :].reshape(-1)[idx]
