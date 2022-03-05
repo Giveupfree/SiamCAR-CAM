@@ -148,7 +148,7 @@ class GroupCAM(object):
 
         score_saliency_map = (score_saliency_map - score_saliency_map_min) / (
                 score_saliency_map_max - score_saliency_map_min).data
-        return score_saliency_map.cpu().data.numpy(), x_crop.cpu().numpy(), bbox
+        return score_saliency_map.cpu().data, x_crop.cpu().numpy(), bbox
 
     def __call__(self, input, class_idx=None, retain_graph=True):
         return self.forward(input, class_idx, retain_graph)
