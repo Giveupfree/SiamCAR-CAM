@@ -58,8 +58,7 @@ def show_cam(img, mask, title=None, title2=None):
     heatmap = (heatmap - heatmap.min()) / (heatmap.max() - heatmap.min())
 
     # cam = heatmap + img.cpu()
-    mask=mask.numpy()
-    heatmap = heatmap.numpy()
+    img = torch.from_numpy(img)
     cam = 1 * (1 - mask ** 0.8) * img + (mask ** 0.8) * heatmap
     if title is not None:
         vutils.save_image(cam, title)
