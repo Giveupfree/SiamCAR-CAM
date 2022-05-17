@@ -212,6 +212,19 @@ def main():
                 with open(result_path, 'w') as f:
                     for x in track_times:
                         f.write("{:.6f}\n".format(x))
+            elif "GOT" in args.dataset:
+                video_path = os.path.join(model_path, video.name)
+                if not os.path.isdir(video_path):
+                    os.makedirs(video_path)
+                result_path = os.path.join(video_path, '{}_001.txt'.format(video.name))
+                with open(result_path, 'w') as f:
+                    for x in pred_bboxes:
+                        f.write(','.join([str(i) for i in x])+'\n')
+                result_path = os.path.join(video_path,
+                        '{}_time.txt'.format(video.name))
+                with open(result_path, 'w') as f:
+                    for x in track_times:
+                        f.write("{:.6f}\n".format(x))
             else:
                 result_path = os.path.join(model_path, '{}.txt'.format(video.name))
                 with open(result_path, 'w') as f:
