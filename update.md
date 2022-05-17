@@ -6,4 +6,4 @@
   1.Fixed an error caused by the addition of tensor and numpy data in the show_cam function due to version problems
   
   # 2022.05.17 update
-  1.Fix missing "time.txt" file in GOT10k evaluation.
+  1.Fixed a problem with missing "time.txt" files during GOT10k testing.
