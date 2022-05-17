@@ -57,12 +57,8 @@ def main():
         dataset = args.dataset
     params = getattr(cfg.HP_SEARCH, dataset)
     hp = {'lr': params[0], 'penalty_k':params[1], 'window_lr':params[2]}
-    # UAV123 : /media/hushuo2018/Elements/周思恩/UAV123/data_seq
-    # OTB100 : /media/hushuo2018/Elements/周思恩
-    # cur_dir = os.path.dirname(os.path.realpath(__file__))
 
     dataset_root = os.path.join(args.dataset_dir, args.dataset)
-    # dataset_root = "/media/hushuo2018/Elements/周思恩/UAV123"
     model = ModelBuilder()
 
     # load model
