@@ -289,7 +289,7 @@ if __name__ == "__main__":
                                 direction='maximize',
                                 storage='sqlite:///{}.db'.format(args.dataset),
                                 load_if_exists=True)
-    study.optimize(objective, n_trials=1000)
+    study.optimize(objective, n_trials=500)
     print('Best value: {} (params: {})\n'.format(study.best_value, study.best_params))
 
 
