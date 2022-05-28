@@ -7,3 +7,6 @@
   
   # 2022.05.17 update
   1.Fixed a problem with missing "time.txt" files during GOT10k testing.
+  
+  # 2022.05.29 update
+  1.Add SiamCAR hyperparameter search code.
