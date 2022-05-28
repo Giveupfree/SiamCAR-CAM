@@ -39,3 +39,15 @@ python tools/CAM-demo.py                                \
 ```
 ## 4. Update
 See update.md for details
+
+## 5. Hyperparametric search
+```bash 
+cd /path/to/SiamCAR-CAM
+conda activate SiamCAR
+export PYTHONPATH=./:$PYTHONPATH
+python tools/tune.py                                \
+	--dataset_dir  /path/to/dataset/root            \ # dataset path
+	--dataset UAV123                                \ # dataset name(OTB100, LaSOText, LaSOT, UAV123, VOT2016, VOT2018, VOT2019)
+	--snapshot snapshot/general_model.pth           \ # tracker_name
+	--config ./experiments/siamcar_r50/config.yaml  \ # config file
+```
