@@ -31,18 +31,17 @@ parser.add_argument('--video', default='', type=str,
         help='eval one special video')
 parser.add_argument('--dataset_dir', type=str, default='F:datasets/',# '../../dataset',
         help='datasets')
-parser.add_argument('--dataset', type=str, default='LaSOText',
+parser.add_argument('--dataset', type=str, default='OTB100',
         help='datasets')#OTB50 LaSOT UAV123 GOT-10k
 parser.add_argument('--vis', action='store_true',default=False,
         help='whether visualzie result')
-parser.add_argument('--start_epoch', type=int, default=17,
+parser.add_argument('--start_epoch', type=int, default=11,
         help='snapshot of models to eval')
 parser.add_argument('--end_epoch', type=int, default=20,
         help='snapshot of models to eval')
-parser.add_argument('--snapshot_dir', type=str, default='LaSOText',
+parser.add_argument('--snapshot_dir', type=str, default='./snapshot',
         help='snapshot of models to eval')
-
-parser.add_argument('--config', type=str, default='./experiments/SiamPD_googLeNet/config.yaml',
+parser.add_argument('--config', type=str, default='./experiments/siamcar_r50/config.yaml',
         help='config file')
 
 args = parser.parse_args()
