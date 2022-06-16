@@ -53,7 +53,7 @@ def main():
     # hp_search
     if args.dataset == "GOT-10k":
         dataset = "GOT10K"
-        dataset_root = os.path.join(args.dataset_dir, args.dataset, "test")
+        dataset_root = os.path.join(args.dataset_dir, dataset, "test")
     else:
         dataset = args.dataset
         dataset_root = os.path.join(args.dataset_dir, args.dataset)
