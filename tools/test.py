@@ -53,8 +53,10 @@ def main():
     # hp_search
     if args.dataset == "GOT-10k":
         dataset = "GOT10k"
+        dataset_root = os.path.join(args.dataset_dir, args.dataset, "test")
     else:
         dataset = args.dataset
+        dataset_root = os.path.join(args.dataset_dir, args.dataset)
     params = getattr(cfg.HP_SEARCH, dataset)
     hp = {'lr': params[0], 'penalty_k':params[1], 'window_lr':params[2]}
 
