@@ -27,7 +27,7 @@ from toolkit.utils.region import vot_overlap, vot_float2str
 
 parser = argparse.ArgumentParser(description='siamcar tracking')
 
-parser.add_argument('--video', default='Human2', type=str,
+parser.add_argument('--video', default='', type=str,
         help='eval one special video')
 parser.add_argument('--dataset_dir', type=str, default='../../dataset',# '',
         help='datasets')
