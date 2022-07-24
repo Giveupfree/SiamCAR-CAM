@@ -22,12 +22,13 @@ class UnNormalize(nn.Module):
         mean = torch.as_tensor(self.mean, dtype=tensor.dtype, device=tensor.device)
         std = torch.as_tensor(self.std, dtype=tensor.dtype, device=tensor.device)
         tensor = tensor
+        
+        mean = mean.view(3, 1, 1)
+        std = std.view(3, 1, 1)
+        
         if tensor.ndim > 3:
-            mean = mean.view(1, 3, 1, 1)
-            std = std.view(1, 3, 1, 1)
-        else:
-            mean = mean.view(3, 1, 1)
-            std = std.view(3, 1, 1)
+            mean = mean.unsqueeze(0)
+            std = std.unsqueeze(0)
         mean = mean.expand(tensor.shape)
         std = std.expand(tensor.shape)
         tensor = tensor * std + mean
