@@ -130,7 +130,7 @@ class GroupCAM(object):
                 # predication on masked input
                 blur_input = norm_img * norm_saliency_map + blur_img * (1 - norm_saliency_map)
                 # norm_img = self.transform_norm(blur_input.squeeze(0)).unsqueeze(0) #此处无需再归一化
-                blur_img = blur(norm_img)
+                blur_img = blur(blur_input)
                 img = self.Nutransform(blur_img.squeeze(0)).unsqueeze(0)
                 outcls = self.model.model.track(torch.cat([img[:, 2, :, :][:, None, :, :],
                                      img[:, 1, :, :][:, None, :, :],
