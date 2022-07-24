@@ -16,7 +16,7 @@ from pysot.core.config import cfg
 from pysot.models.model_builder import ModelBuilder
 from pysot.tracker.siamcar_tracker_cam import SiamCARTracker
 from pysot.utils.model_load import load_pretrain
-from CAM.GroupCAM import GroupCAM
+from CAM import get_CAM
 from toolkit.utils.region import vot_overlap, vot_float2str
 from pysot.utils.bbox import get_axis_aligned_bbox
 import numpy as np
@@ -31,6 +31,7 @@ parser.add_argument('--dataset_dir', type=str,# '',
 parser.add_argument('--dataset', type=str, default='OTB100',
         help='datasets')
 parser.add_argument('--snapshot', type=str, default='./snapshot/got10k_model.pth', help='model name')
+parser.add_argument('--CAM_name', type=str, default='GradCAM', help='model name')
 # softmax, head.cls_logits, head.centerness, head.bbox_tower.0, backbone.layer4.2, ....
 parser.add_argument('--register_layer', default='softmax', type=str, help=' View the parameter names of each layer corresponding to the printed model')
 parser.add_argument('--video_name', default='', type=str, help='videos or image files')
@@ -125,7 +126,7 @@ def main():
     model = Model(model)
     # build tracker
     tracker = SiamCARTracker(model, cfg.TRACK)
-    CAM = GroupCAM(tracker, target_layer=args.register_layer)
+    CAM = get_CAM(args.CAM_name, model=tracker, target_layer=args.register_layer)
     if args.dataset == "GOT-10k":
         dataset = "GOT10k"
     else:
@@ -173,10 +174,10 @@ def main():
                         frame_counter = idx + 5  # skip 5 frames
                         lost_number += 1
                     if outputs is not None:
-                        heatmap_path = os.path.join(args.save_dir, "heatmap", video.name)
+                        heatmap_path = os.path.join(args.save_dir, args.CAM_name, "heatmap", video.name)
                         if os.path.exists(heatmap_path) is False:
                             os.makedirs(heatmap_path)
-                        fusion_path = os.path.join(args.save_dir, "fusion", video.name)
+                        fusion_path = os.path.join(args.save_dir, args.CAM_name, "fusion", video.name)
                         if os.path.exists(fusion_path) is False:
                             os.makedirs(fusion_path)
                         show_cam(img_crop, outputs, fusion_path + "/{:06d}.{}".format(idx, args.format),
@@ -208,10 +209,10 @@ def main():
                 else:
                     outputs, img_crop, bbox = CAM(img, hp)
                     if outputs is not None:
-                        heatmap_path = os.path.join(args.save_dir, "heatmap", video.name)
+                        heatmap_path = os.path.join(args.save_dir, args.CAM_name, "heatmap", video.name)
                         if os.path.exists(heatmap_path) is False:
                             os.makedirs(heatmap_path)
-                        fusion_path = os.path.join(args.save_dir, "fusion", video.name)
+                        fusion_path = os.path.join(args.save_dir,args.CAM_name, "fusion", video.name)
                         if os.path.exists(fusion_path) is False:
                             os.makedirs(fusion_path)
                         show_cam(img_crop, outputs, fusion_path + "/{:06d}.{}".format(idx, args.format),
