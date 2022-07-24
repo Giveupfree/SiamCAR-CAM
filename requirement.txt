@@ -10,3 +10,5 @@ cython
 tensorboardX
 kornia
 optuna
+sklearn
+numba
