@@ -8,12 +8,13 @@ from kornia.filters.gaussian import gaussian_blur2d
 from CAM.BaseCAM import BaseCAM
 import torch
 from CAM.cluster import group_sum
+from pysot.core.config import cfg
 
 blur = lambda x: gaussian_blur2d(x, kernel_size=(51, 51), sigma=(50., 50.))
 # Copyright (c) SenseTime. All Rights Reserved.
 
 class GroupCAM(BaseCAM):
-    def __init__(self, model, target_layer="layer4.2", Norm=True, groups=2, cluster_method=None):
+    def __init__(self, model, target_layer="layer4.2", Norm=True, groups=cfg.TRAIN.NUM_CLASSES, cluster_method=None):
         super(GroupCAM, self).__init__(model, target_layer, Norm)
         self.groups = groups
         assert cluster_method in [None, 'k_means', 'agglomerate']
