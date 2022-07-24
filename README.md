@@ -1,5 +1,4 @@
 # [SiamCAR](https://openaccess.thecvf.com/content_CVPR_2020/html/Guo_SiamCAR_Siamese_Fully_Convolutional_Classification_and_Regression_for_Visual_Tracking_CVPR_2020_paper.html)
-# [Group-CAM](https://arxiv.org/pdf/2103.13859v4.pdf)
 
 Note: Not all frames can draw a Heatmap image, which may be a bug.
 
@@ -33,6 +32,7 @@ python tools/CAM-demo.py                                \
 	--dataset UAV123                                \ # dataset name(OTB100, GOT-10k, LaSOT, UAV123)
 	--snapshot snapshot/general_model.pth           \ # tracker_name
 	--format bmp                                    \ # save fomat (pdf,png,jpg,bmp)   
+	--CAM_name GroupCAM                             \ # CAM_name (GroupCAM, GradCAM, GradCAMpp, SmoothGradCAM, ScoreCAM)  
 	--save_dir /path/to/save                        \ # save dir
 	--config ./experiments/siamcar_r50/config.yaml  \ # config file
 	--register_layer softmax                        \ # module register name
