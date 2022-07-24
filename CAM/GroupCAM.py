@@ -3,77 +3,22 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 import numpy as np
-import torch
 import torch.nn.functional as F
 from kornia.filters.gaussian import gaussian_blur2d
+from CAM.BaseCAM import BaseCAM
+import torch
+from CAM.cluster import group_sum
 
 blur = lambda x: gaussian_blur2d(x, kernel_size=(51, 51), sigma=(50., 50.))
 # Copyright (c) SenseTime. All Rights Reserved.
-import cv2
-import torchvision.transforms as transforms
 
-
-class UnNormalize(object):
-    def __init__(self, mean, std):
-        self.mean = mean
-        self.std = std
-
-    def __call__(self, tensor):
-        """
-        Args:
-        :param tensor: tensor image of size (B,C,H,W) to be un-normalized
-        :return: UnNormalized image
-        """
-        if tensor.ndim > 3:
-            tensor = tensor.permute(1, 0, 2, 3)
-        for t, m, s in zip(tensor, self.mean, self.std):
-            t.mul_(s).add_(m)
-        if tensor.ndim > 3:
-            tensor = tensor.permute(1, 0, 2, 3)
-        tensor = tensor.clamp(min=0, max=1)
-        return tensor
-
-
-class GroupCAM(object):
-    def __init__(self, model, target_layer="layer4.2", groups=32):
-        super(GroupCAM, self).__init__()
-        self.model = model
+class GroupCAM(BaseCAM):
+    def __init__(self, model, target_layer="layer4.2", Norm=True, groups=2, cluster_method=None):
+        super(GroupCAM, self).__init__(model, target_layer, Norm)
         self.groups = groups
-        self.gradients = dict()
-        self.activations = dict()
-        self.transform_norm = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        self.Nutransform = UnNormalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        self.target_layer = target_layer
-        if "backbone" in target_layer:
-            for module in self.model.model.model.backbone.named_modules():
-                if module[0] == '.'.join(target_layer.split('.')[1:]):
-                    module[1].register_forward_hook(self.forward_hook)
-                    module[1].register_backward_hook(self.backward_hook)
-        if 'down' in target_layer:
-            for module in self.model.model.model.down.named_modules():
-                module[1].register_forward_hook(self.forward_hook)
-                module[1].register_backward_hook(self.backward_hook)
-        if "neck" in target_layer:
-            for module in self.model.model.model.down.named_modules():
-                module[1].register_forward_hook(self.forward_hook)
-                module[1].register_backward_hook(self.backward_hook)
-        if 'car_head' in target_layer:
-            for module in self.model.model.model.car_head.named_modules():
-                if module[0] == '.'.join(target_layer.split('.')[1:]):
-                    module[1].register_forward_hook(self.forward_hook)
-                    module[1].register_backward_hook(self.backward_hook)
+        assert cluster_method in [None, 'k_means', 'agglomerate']
+        self.cluster = cluster_method
 
-        if "softmax" in target_layer:
-            for module in self.model.model.softmax.named_modules():
-                module[1].register_forward_hook(self.forward_hook)
-                module[1].register_backward_hook(self.backward_hook)
-
-
-    def backward_hook(self, module, grad_input, grad_output):
-        self.gradients['value'] = grad_output[0]
-
-    def forward_hook(self, module, input, output):
-        self.activations['value'] = output
 
     def forward(self, x, hp, retain_graph=False):
         output = self.model.track_cam(x, hp)
@@ -94,17 +39,26 @@ class GroupCAM(object):
         weights = alpha.view(b, k, 1, 1)
         activations = weights * activations
 
-        score_saliency_map = torch.zeros((1, 1, h, w))
+        if self.cluster is None:
+            saliency_map = activations.chunk(self.groups, 1)
+            saliency_map = torch.cat(saliency_map, dim=0)
+            saliency_map = saliency_map.sum(1, keepdim=True)
+        else:
+            saliency_map = group_sum(activations, n=self.groups, cluster_method=self.cluster)
+            saliency_map = torch.cat(saliency_map, dim=0)
 
-        if torch.cuda.is_available():
-            activations = activations.cuda()
-            score_saliency_map = score_saliency_map.cuda()
-
-        masks = activations.chunk(self.groups, 1)
+        saliency_map = F.relu(saliency_map)
+        saliency_map = F.interpolate(saliency_map, size=(h, w), mode='bilinear', align_corners=False)
+        norm_saliency_map = saliency_map.reshape(self.groups, -1)
+        inter_min = norm_saliency_map.min(dim=-1, keepdim=True)[0]
+        inter_max = norm_saliency_map.max(dim=-1, keepdim=True)[0]
+        norm_saliency_map = (norm_saliency_map-inter_min) / (inter_max - inter_min)
+        norm_saliency_maps = norm_saliency_map.reshape(self.groups, 1, h, w)
+        outputs = torch.zeros((self.groups, 1))
         with torch.no_grad():
             x_crop = torch.cat([x_crop[:, 2, :, :][:, None, :, :],
                                      x_crop[:, 1, :, :][:, None, :, :],
-                                     x_crop[:, 0, :, :][:, None, :, :]], dim=1)/ 255.0
+                                     x_crop[:, 0, :, :][:, None, :, :]], dim=1) / 255.0
             # 归一化和反归一化中的squeeze(0)和unsqueeze(0)用于兼容不同版本的torchvision
             norm_img = self.transform_norm(x_crop.squeeze(0)).unsqueeze(0)
             blur_img = blur(norm_img)
@@ -112,43 +66,24 @@ class GroupCAM(object):
             base_line = self.model.model.track(torch.cat([img[:, 2, :, :][:, None, :, :],
                                      img[:, 1, :, :][:, None, :, :],
                                      img[:, 0, :, :][:, None, :, :]], dim=1) * 255.0)["cls"][:, 1, :, :][:, None, :, :].reshape(-1)[idx]
-            for saliency_map in masks:
-                saliency_map = saliency_map.sum(1, keepdims=True)
-                saliency_map = F.relu(saliency_map)
-                threshold = np.percentile(saliency_map.cpu().numpy(), 70)
-                saliency_map = torch.where(
-                    saliency_map > threshold, saliency_map, torch.full_like(saliency_map, 0))
-                saliency_map = F.interpolate(saliency_map, size=(h, w), mode='bilinear', align_corners=False)
 
-                if saliency_map.max() == saliency_map.min():
-                    continue
-
-                # normalize to 0-1
-                norm_saliency_map = (saliency_map - saliency_map.min()) / (saliency_map.max() - saliency_map.min())
-
-                # how much increase if keeping the highlighted region
-                # predication on masked input
-                blur_input = norm_img * norm_saliency_map + blur_img * (1 - norm_saliency_map)
-                # norm_img = self.transform_norm(blur_input.squeeze(0)).unsqueeze(0) #此处无需再归一化
-                blur_img = blur(blur_input)
-                img = self.Nutransform(blur_img.squeeze(0)).unsqueeze(0)
+            for index, norm_saliency_map in enumerate(norm_saliency_maps):
+                blur_x = norm_img * norm_saliency_map + blur_img * (1 - norm_saliency_map)
+                img = self.Nutransform(blur_x.squeeze(0)).unsqueeze(0)
                 outcls = self.model.model.track(torch.cat([img[:, 2, :, :][:, None, :, :],
-                                     img[:, 1, :, :][:, None, :, :],
-                                     img[:, 0, :, :][:, None, :, :]], dim=1) * 255.0)["cls"][:, 1, :, :][:, None, :, :].reshape(-1)[idx]
-                score = outcls - base_line
-
-                # score_saliency_map += score * saliency_map
-                score_saliency_map += score * norm_saliency_map
-
-        score_saliency_map = F.relu(score_saliency_map)
+                                                       img[:, 1, :, :][:, None, :, :],
+                                                       img[:, 0, :, :][:, None, :, :]], dim=1) * 255.0)["cls"][:, 1, :,
+                     :][:, None, :, :].reshape(-1)[idx]
+                outputs[index, 0] = outcls
+        score = outcls - base_line.unsqueeze(0).repeat(self.groups, 1)
+        score = F.relu(score).unsqueeze(-1).unsqueeze(-1)
+        score_saliency_map = torch.sum(saliency_map * score, dim=0, keepdim=True)
         score_saliency_map_min, score_saliency_map_max = score_saliency_map.min(), score_saliency_map.max()
-
         if score_saliency_map_min == score_saliency_map_max:
             return None, None, None
-
         score_saliency_map = (score_saliency_map - score_saliency_map_min) / (
-                score_saliency_map_max - score_saliency_map_min).data
+                    score_saliency_map_max - score_saliency_map_min + self.esp).data
         return score_saliency_map.cpu().data, x_crop.cpu().numpy(), bbox
 
-    def __call__(self, input, class_idx=None, retain_graph=True):
-        return self.forward(input, class_idx, retain_graph)
+    def __call__(self, input, hp, retain_graph=True):
+        return self.forward(input, hp, retain_graph)
