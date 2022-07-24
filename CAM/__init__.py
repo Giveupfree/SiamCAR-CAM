@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 from CAM.GradCAM import GradCAM, GradCAMpp, SmoothGradCAM
 from CAM.GroupCAM import GroupCAM
 from CAM.ScoreCAM import ScoreCAM
+from CAM.RISE import RISE
 
 CAM = {
     'GradCAM': GradCAM,
@@ -15,6 +16,7 @@ CAM = {
     "SmoothGradCAM": SmoothGradCAM,
     'ScoreCAM': ScoreCAM,
     'GroupCAM': GroupCAM,
+    "RISE": RISE,
 }
 
 
