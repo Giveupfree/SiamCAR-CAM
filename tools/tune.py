@@ -19,7 +19,7 @@ from pysot.core.config import cfg
 from pysot.models.model_builder import ModelBuilder
 from pysot.utils.bbox import get_axis_aligned_bbox
 from pysot.utils.model_load import load_pretrain
-from toolkit.datasets import DatasetFactory, OTBDataset, UAVDataset, LaSOTDataset, \
+from toolkit.datasets import DatasetFactory, OTBDataset, UAVDataset, LaSOTDataset, GOT10kDataset,\
     VOTDataset, NFSDataset, VOTLTDataset
 from toolkit.utils.region import vot_overlap, vot_float2str
 from toolkit.evaluation import OPEBenchmark, AccuracyRobustnessBenchmark, \
@@ -48,6 +48,12 @@ def eval(dataset, tracker_name):
         auc = np.mean(list(eval_auc[tracker_name].values()))
         return auc
     elif 'LaSOT' in args.dataset:
+        dataset.set_tracker(tracker_dir, trackers)
+        benchmark = OPEBenchmark(dataset)
+        eval_auc = benchmark.eval_success(tracker_name)
+        auc = np.mean(list(eval_auc[tracker_name].values()))
+        return auc
+    elif 'GOT' in args.dataset:
         dataset.set_tracker(tracker_dir, trackers)
         benchmark = OPEBenchmark(dataset)
         eval_auc = benchmark.eval_success(tracker_name)
@@ -215,6 +221,19 @@ def objective(trial):
                 with open(result_path, 'w') as f:
                     for x in track_times:
                         f.write("{:.6f}\n".format(x))
+            elif "GOT" in args.dataset:
+                video_path = os.path.join(model_path, video.name)
+                if not os.path.isdir(video_path):
+                    os.makedirs(video_path)
+                result_path = os.path.join(video_path, '{}_001.txt'.format(video.name))
+                with open(result_path, 'w') as f:
+                    for x in pred_bboxes:
+                        f.write(','.join([str(i) for i in x])+'\n')
+                result_path = os.path.join(video_path,
+                        '{}_time.txt'.format(video.name))
+                with open(result_path, 'w') as f:
+                    for x in track_times:
+                        f.write("{:.6f}\n".format(x))
             else:
                 if not os.path.isdir(tracker_name):
                     os.makedirs(tracker_name)
@@ -263,11 +282,17 @@ if __name__ == "__main__":
                                             dataset_root=dataset_root,
                                             load_img=False)
     # Eval dataset
+    if args.dataset == "GOT-10k":
+        root = os.path.join(args.dataset_dir, "GOT10K", "test")
+    else:
+        root = os.path.join(args.dataset_dir, args.dataset)
     root = os.path.join(args.dataset_root, args.dataset)
     if 'OTB' in args.dataset:
         dataset_eval = OTBDataset(args.dataset, root)
     elif 'LaSOT' in args.dataset:
         dataset_eval = LaSOTDataset(args.dataset, root)
+    elif 'GOT-10k' == args.dataset:
+        dataset_eval = GOT10kDataset(args.dataset, root)
     elif 'UAV' in args.dataset:
         dataset_eval = UAVDataset(args.dataset, root)
     elif 'NFS' in args.dataset:
