@@ -286,7 +286,6 @@ if __name__ == "__main__":
         root = os.path.join(args.dataset_dir, "GOT10K", "test")
     else:
         root = os.path.join(args.dataset_dir, args.dataset)
-    root = os.path.join(args.dataset_root, args.dataset)
     if 'OTB' in args.dataset:
         dataset_eval = OTBDataset(args.dataset, root)
     elif 'LaSOT' in args.dataset:
