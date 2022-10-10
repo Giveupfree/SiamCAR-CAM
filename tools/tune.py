@@ -296,7 +296,7 @@ if __name__ == "__main__":
         dataset_eval = UAVDataset(args.dataset, root)
     elif 'NFS' in args.dataset:
         dataset_eval = NFSDataset(args.dataset, root)
-    if args.dataset in ['VOT2016', 'VOT2017', 'VOT2018', 'VOT2019']:
+    elif args.dataset in ['VOT2016', 'VOT2017', 'VOT2018', 'VOT2019']:
         dataset_eval = VOTDataset(args.dataset, root)
     elif 'VOT2018-LT' == args.dataset:
         dataset_eval = VOTLTDataset(args.dataset, root)
