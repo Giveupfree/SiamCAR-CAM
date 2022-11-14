@@ -67,3 +67,6 @@ python tools/tune.py                                \
 1.The code supports the drawing of multiple CAM
 
 2.Add Rise visualization code
+
+## 2022.11.14 update
+Fix bug in parameter search
