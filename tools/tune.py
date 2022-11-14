@@ -222,7 +222,7 @@ def objective(trial):
                     for x in track_times:
                         f.write("{:.6f}\n".format(x))
             elif "GOT" in args.dataset:
-                video_path = os.path.join(model_path, video.name)
+                video_path = os.path.join(tracker_name, video.name)
                 if not os.path.isdir(video_path):
                     os.makedirs(video_path)
                 result_path = os.path.join(video_path, '{}_001.txt'.format(video.name))
