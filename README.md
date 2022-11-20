@@ -70,3 +70,6 @@ python tools/tune.py                                \
 
 ## 2022.11.14 update
 Fix bug in parameter search
+
+## 2022.11.20 update
+Fixed the issue that parameters could not be searched under GO10k
