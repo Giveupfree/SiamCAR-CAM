@@ -72,3 +72,5 @@ python tools/tune.py                                \
 Fix bug in parameter search
 
 
+## 2022.11.20 update
+Fixed the issue that parameters could not be searched under GOT-10k
