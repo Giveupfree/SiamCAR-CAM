@@ -259,7 +259,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='tuning for SiamPD')
     parser.add_argument('--dataset_root', default='/path/to/dataset', type=str, help='datasetdir')
     parser.add_argument('--dataset', default='UAV123', type=str, help='dataset')
-    parser.add_argument('--config', default='./experiments/SiamPD_r50/config.yaml', type=str, help='config file')
+    parser.add_argument('--config', default='./experiments/siamcar_r50/config.yaml', type=str, help='config file')
     parser.add_argument('--snapshot', default='./snapshot/model_general.pth', type=str,
                         help='snapshot of models to eval')
     parser.add_argument("--gpu_id", default="0", type=str, help="gpu id")
