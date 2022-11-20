@@ -19,7 +19,7 @@ class Video(object):
         self.imgs = None
 
         if load_img:
-            self.imgs = [cv2.imread(img)
+            self.imgs = [cv2.imread(x)
                             for x in self.img_names]
             self.width = self.imgs[0].shape[1]
             self.height = self.imgs[0].shape[0]
@@ -42,18 +42,24 @@ class Video(object):
             tracker_names = [tracker_names]
         for name in tracker_names:
             traj_file = os.path.join(path, name, self.name+'.txt')
+            traj_file1 = os.path.join(path, name, self.name, self.name + '_001.txt')
+            flag = False
             if os.path.exists(traj_file):
-                with open(traj_file, 'r') as f :
+                traj_file = traj_file
+                flag = True
+            elif os.path.exists(traj_file1):
+                traj_file = traj_file1
+                flag = True
+            if flag:
+                with open(traj_file, 'r') as f:
                     pred_traj = [list(map(float, x.strip().split(',')))
-                            for x in f.readlines()]
+                                 for x in f.readlines()]
                 if len(pred_traj) != len(self.gt_traj):
                     print(name, len(pred_traj), len(self.gt_traj), self.name)
                 if store:
                     self.pred_trajs[name] = pred_traj
-                else:
-                    return pred_traj
             else:
-                print(traj_file)
+                return pred_traj
         self.tracker_names = list(self.pred_trajs.keys())
 
     def load_img(self):
