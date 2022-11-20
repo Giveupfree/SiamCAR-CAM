@@ -272,20 +272,19 @@ if __name__ == "__main__":
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
     # load config
     cfg.merge_from_file(args.config)
-    dataset_root = os.path.join(args.dataset_root, args.dataset)
+
+    if args.dataset == "GOT-10k":
+        root = os.path.join(args.dataset_root, "GOT-10k", "test")
+    else:
+        root = os.path.join(args.dataset_root, args.dataset)
     # create model
     model = ModelBuilder()
     # load model
     model = load_pretrain(model, args.snapshot).cuda().eval()
     # create dataset
     dataset = DatasetFactory.create_dataset(name=args.dataset,
-                                            dataset_root=dataset_root,
+                                            dataset_root=root,
                                             load_img=False)
-    # Eval dataset
-    if args.dataset == "GOT-10k":
-        root = os.path.join(args.dataset_root, "GOT10K", "test")
-    else:
-        root = os.path.join(args.dataset_root, args.dataset)
     
     if 'OTB' in args.dataset:
         dataset_eval = OTBDataset(args.dataset, root)
