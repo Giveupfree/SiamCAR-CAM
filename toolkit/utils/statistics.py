@@ -99,7 +99,7 @@ def overlap_ratio(rect1, rect2):
     iou = np.maximum(np.minimum(1, iou), 0)
     return iou
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def success_overlap(gt_bb, result_bb, n_frame):
     thresholds_overlap = np.arange(0, 1.05, 0.05)
     success = np.zeros(len(thresholds_overlap))
