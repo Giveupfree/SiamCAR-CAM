@@ -60,7 +60,7 @@ class Video(object):
                     self.pred_trajs[name] = pred_traj
                 return pred_traj
             else:
-                print(pred_traj)
+                print(traj_file)
                 print(traj_file1)
         self.tracker_names = list(self.pred_trajs.keys())
 
