@@ -74,3 +74,7 @@ Fix bug in parameter search
 
 ## 2022.11.20 update
 Fixed the issue that parameters could not be searched under GOT-10k
+
+
+### Update 2022.11.21
+1.Fix a code bug from 2022.11.20
